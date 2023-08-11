@@ -36,11 +36,13 @@
 - Section-1-SQL-Assignment
   - docker/
     - Dockerfile
+    - DDL.sql
+  - queries/
+    - Update.sql
+    - Queries.sql
+    - Indexing.sql
+    - Partitioning.sql 
   - terraform/
-  - DDL.sql 
-  - Update.sql
-  - Answer.md
-  - Queries.sql
   - README.md
 - Section-2-Java-Assignment
   - src/
