@@ -1,0 +1,70 @@
+# Table of contents
+1. Assignment Prompt
+2. High Level Approach
+3. How to use
+
+# Assignment
+You are tasked with implementing a simple online bookstore inventory system. The inventory consists of books, and you need to design data structures and implement algorithms to manage the inventory. Additionally, you need to interact with a SQL database to store and retrieve data.
+
+Requirement:
+
+Implement a microservice Bookstore that contains the following functionality:
+Add a book to the inventory.
+Remove a book from the inventory.
+Update the quantity in stock for a given book.
+Retrieve the quantity in stock for a given book.
+List all books in the inventory.
+Implement at least one popular design pattern in your solution. You can choose from patterns like Singleton, Factory, Observer, Strategy, or any other appropriate pattern that fits the context of the problem.
+Additional Requirements (Bonus Points):
+
+Search and Filter Functionality: Implement a search functionality that allows users to search for books by their title, author, or ISBN. Additionally, add filtering options to search for books based on price range, availability, or any other relevant criteria.
+Authentication and Authorization: Implement a simple authentication mechanism for users, including registration and login. Ensure that only authenticated users can perform certain actions, such as adding books to the inventory or making purchases.
+Error Handling and Logging: Implement robust error handling and logging mechanisms to capture and log any exceptions or errors that occur during the execution of the system.
+Performance Optimization: Optimize the database queries and operations for improved performance and efficiency, especially when dealing with large datasets.
+Instructions:
+
+Use Java to implement the classes and methods described above. You may use any popular java framework such as Spring Boot, Micronaut, hibernate etc...
+Use any relational database of your choice (e.g., MySQL, PostgreSQL) for storing the book information. Include instructions on how to set up the database schema and connection details in your submission.
+You can use any appropriate data structures and algorithms to implement the functionalities.
+Make sure to handle any potential exceptions or errors that may occur during database interactions or book inventory management.
+
+# High Level Approach
+- Functional Requirements:
+  - Microservice that does simple HTTP actions, GET, PUT, UPDATE, DELETE
+  - Need to decide on ORM: How Java Classes map to the DB Schema
+  - Need to decide on the DB Schema 
+  - Need to standup a mock DB for app to talk to
+  - Need to decide on Java framework to use here
+  - Design Pattern to use here. (Singleton, Factory, Observer, Strategy etc) and pros and cons
+  - Decide if need a simple webserver to talk to backend
+
+- Additional Requirements:
+  - Search and Filter: Search by title, author, ISBN? AND filter by price, avail etc. 
+    - If search and filter, prolly need a webserver with a search bar and filter with checkboxes and scrollers
+    - Typical search API with a /search?queryString=author pattern will be needed
+  - Authenticate and Authorize: Registration and login. Only authenticated users can UPDATE inventory and make purchases?
+    - Few ways can tackle this: 
+    - Most man mode way: create a table for users, on user registration, take in user login and pw as text,
+    - On calling the Registration API, a random seed is generated based on timestamp, concat the user pw with the seed (salt) and SHA256 it
+    - Write the hashed pw and random seed and user login to DB (Plaintext pw is never stored in DB.)
+    - On calling the Login API, retrieve the random seed, and hashed pw based on user login, take the user provided pw, concat with random seed, sha256 it
+    - Compare this SHA256 string with the correct one stored in DB. If the two strings are equal, user is authenticated, return a user token. 
+    - Once user token is generated, the user token needs to be supplied to the UPDATE books API in the header of the HTTP request. 
+    - Other ways can be considered using AWS Cognito or using IDP (Identity provider), Approach uses SAML and Auth0. 
+  - Error handling and logging: 
+    - Rely on springboot exception handlers like @ControllerAdvice
+    - Use logging library like Log4j to log exceptions and events
+  - Improve Performance of DB:
+    - Index important fields in postgres where queries hit the most
+    - Consider using cache like Redis or Memcached. 
+
+- Deployment Considerations:
+  - Docker Approach:
+    - Docker Image that contains the Java codebase in a standalone monolithic Service
+    - Docker Image that contains the Postgres container that will serve as the database
+    - Possibly also need another Docker image if need a simple frontend
+    - docker-compose for the networking needed between two docker containers on localhost
+  - AWS Approach (To be attempted if there is enough time?) :
+    - Each functionality is its own Serverless lambda, Add book, remove book, Update qty, Retrieve qty, List all books
+    - Each lambda is its own endpoint on API gateway with the respective HTTP action, GET, PUT, UPDATE, DELETE
+    - Postgres DB to be stood up on RDS
