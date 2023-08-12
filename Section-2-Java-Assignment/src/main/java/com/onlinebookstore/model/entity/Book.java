@@ -19,10 +19,10 @@ public class Book {
     @Column(name = "isbn", nullable = false)
     private String isbn;
 
-    @Column(name = "price", nullable = false)
+    @Column(name = "price")
     private Double price;
 
-    @Column(name = "quantity", nullable = false)
+    @Column(name = "quantity")
     private Integer quantityInStock;
 
     public Book() {

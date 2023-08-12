@@ -28,7 +28,7 @@ public class BookController {
 
     @PostMapping(consumes = "application/json")
     public ResponseEntity<Book> addBook(@Valid @RequestBody Book book) {
-        logger.debug("Received book data: {}", book);
+        logger.info("Received book data: {}", book);
         if (book.getTitle() == null || book.getTitle().isEmpty()) {
             return ResponseEntity.badRequest().body(null);
         }
@@ -49,21 +49,21 @@ public class BookController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeBook(@PathVariable Long id) {
-        logger.debug("Removing book with id: {}", id);
+        logger.info("Removing book with id: {}", id);
         bookService.removeBook(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/quantity")
     public ResponseEntity<Book> updateBookQuantity(@PathVariable Long id, @RequestBody Integer quantity) {
-        logger.debug("Updating quantity for book id: {} with quantity: {}", id, quantity);
+        logger.info("Updating quantity for book id: {} with quantity: {}", id, quantity);
         Book updatedBook = bookService.updateBookQuantity(id, quantity);
         return ResponseEntity.ok(updatedBook);
     }
 
     @GetMapping("/{id}/quantity")
     public ResponseEntity<Integer> getBookQuantity(@PathVariable Long id) {
-        logger.debug("Retrieving quantity for book id: {}", id);
+        logger.info("Retrieving quantity for book id: {}", id);
         Integer quantity = bookService.getBookQuantity(id);
         return ResponseEntity.ok(quantity);
     }

@@ -3,6 +3,13 @@
 2. High Level Approach
 3. How to use
 
+# TODO: 
+Search And Filter
+Auth and Auth 
+Error Handling (Actl this alr done just gotta add more error handlers)
+Testing 
+Performance Optimization (Low prio maybe use cache)
+
 # Assignment
 You are tasked with implementing a simple online bookstore inventory system. The inventory consists of books, and you need to design data structures and implement algorithms to manage the inventory. Additionally, you need to interact with a SQL database to store and retrieve data.
 
@@ -27,6 +34,18 @@ Use Java to implement the classes and methods described above. You may use any p
 Use any relational database of your choice (e.g., MySQL, PostgreSQL) for storing the book information. Include instructions on how to set up the database schema and connection details in your submission.
 You can use any appropriate data structures and algorithms to implement the functionalities.
 Make sure to handle any potential exceptions or errors that may occur during database interactions or book inventory management.
+
+# Design Pattern used
+Certainly. Let's address the structures in the context of the design patterns provided in the prompt.
+In our solution, one could argue that the Singleton Pattern is implicitly employed through Spring's default behavior of beans. The components such as the BookService and BookController are treated as singletons by the Spring framework. This ensures that there's only one instance of these beans throughout the application, promoting efficient resource use.
+The Factory Pattern can be seen in how Spring manages the instantiation of beans. While we haven't explicitly coded a factory, the Spring framework underneath leverages this pattern when creating instances of our services, repositories, and controllers. The @Autowired annotation and the Spring container handle the responsibility of creating the right object, abstracting away the instantiation details from the developer.
+While we haven't directly used the Observer or Strategy patterns in the provided code, one could envision potential applications. For instance, an Observer pattern could be employed to notify other parts of the system when a new book is added, or the quantity changes, keeping various components in sync. The Strategy pattern could be introduced in the future if we decide to have multiple algorithms or strategies to calculate prices, promotions, or discounts for books.
+Regarding the Behavior pattern, it's not a conventional design pattern like the others mentioned. However, in the broader sense, behavioral patterns like Command, Iterator, or Visitor could be integrated into our system. For instance, if we had a series of operations to perform on each book (like a set of validations or transformations), the Command pattern would be appropriate.
+Finally, the Application, ErrorController, and Maven builds, while embodying best practices, are more about the architecture and tooling than specific design patterns mentioned in the prompt. They ensure modularity, maintainability, and a robust application lifecycle but don't directly map to the mentioned patterns.
+TLDR;
+In our solution, the Singleton Pattern is present via Spring's default bean behavior, ensuring single instances of BookService and BookController. The Factory Pattern is indirectly utilized by Spring when instantiating our services, repositories, and controllers, with the @Autowired annotation abstracting object creation.
+Though we didn't directly implement the Observer or Strategy patterns, they have potential applications. An Observer pattern could notify system parts of book changes, and the Strategy pattern might offer varied book pricing algorithms in the future.
+Lastly, while tools like the Application, ErrorController, and Maven builds represent architectural best practices, they aren't directly aligned with the specific design patterns listed, instead ensuring modularity and robust application management.
 
 # Failed Requests (Errored Out, Caught and Handled Gracedully)
 Failed Request #1. 
@@ -84,7 +103,7 @@ section-2-java-assignment-onlinebookstore-1  | 2023-08-12T12:20:44.035Z ERROR 1 
     - Use logging library like Log4j to log exceptions and events
   - Improve Performance of DB:
     - Index important fields in postgres where queries hit the most
-    - Consider using cache liek 
+    - Consider using cache like redis or memcached 
 
 - Deployment Considerations:
   - Docker Approach:
