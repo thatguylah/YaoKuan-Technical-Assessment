@@ -1,6 +1,13 @@
 package com.onlinebookstore.model.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
 
 @Entity
 @Table(name="users")
@@ -15,15 +22,27 @@ public class User {
     @Column(name="password",nullable = false)
     private String passwordHash;
 
-    @Column(name="role")
-    private String userRole;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private UserRole role;
 
+    public String getUsername(){
+        return username;
+    }
     public String getPasswordHash(){
         return passwordHash;
     }
 
-    public String getUserRole(){
-        return userRole;
+    public UserRole getUserRole(){
+        return role;
+    }
+
+    public void setUserRole(UserRole role){
+        this.role = role;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setPasswordHash(String passwordHash){

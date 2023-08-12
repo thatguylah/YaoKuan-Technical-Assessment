@@ -4,7 +4,12 @@ import com.onlinebookstore.model.entity.User;
 import com.onlinebookstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.onlinebookstore.model.dto.UserRegistrationDTO;
+import com.onlinebookstore.model.dto.UserLoginDTO;
+import org.springframework.http.ResponseEntity;
 
+
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,13 +24,22 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User registerUser(@RequestBody User user) {
-        return userService.registerUser(user);
+    public ResponseEntity<User> registerUser(@Valid @RequestBody UserRegistrationDTO userDTO) {
+        User registerdUser = userService.registerUser(userDTO);
+        return ResponseEntity.ok(registerdUser);
     }
+
+
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody UserLoginDTO userLoginDto) {
+        String jwtToken = userService.authenticateAndRetrieveJWT(userLoginDto);
+        return ResponseEntity.ok(jwtToken);
+    }
+
 
     @GetMapping
     private List<User> getAllUsers() {
-        return bookService.getAllUsers();
+        return userService.getAllUsers();
     }
 
     // Endpoints for login and other user functionalities can be added later.

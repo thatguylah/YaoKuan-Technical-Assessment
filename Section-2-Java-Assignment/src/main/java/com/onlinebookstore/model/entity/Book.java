@@ -1,6 +1,13 @@
 package com.onlinebookstore.model.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
+import java.util.Objects;
+
 
 @Entity
 @Table(name="books")
@@ -103,7 +110,7 @@ public class Book {
 
         Book book = (Book) o;
 
-        return id != null ? id.equals(book.id) : book.id == null;
+        return Objects.equals(id, book.id);
     }
 
     @Override
