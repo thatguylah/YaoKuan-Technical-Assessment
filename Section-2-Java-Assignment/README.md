@@ -28,6 +28,34 @@ Use any relational database of your choice (e.g., MySQL, PostgreSQL) for storing
 You can use any appropriate data structures and algorithms to implement the functionalities.
 Make sure to handle any potential exceptions or errors that may occur during database interactions or book inventory management.
 
+# Failed Requests (Errored Out, Caught and Handled Gracedully)
+Failed Request #1. 
+`curl -v -X POST http://localhost:8080/api/books \
+-H 'Content-Type: application/json' \
+-d '{
+"title": "Example Book Title",
+"author": "Example Author Name",
+"isbn": "978-3-16-148410-0",
+"price": 19.99,
+"quantityInStock": 100
+}'`
+Custom Error Message: {"status":"BAD_REQUEST","message":"Database error. Possible constraint violation."}
+Custom Error Logs:
+section-2-java-assignment-onlinebookstore-1  | 2023-08-12T12:14:07.800Z ERROR 1 --- [nio-8080-exec-1] o.h.engine.jdbc.spi.SqlExceptionHelper   : ERROR: null value in column "title" of relation "books" violates not-null constraint
+section-2-java-assignment-onlinebookstore-1  |   Detail: Failing row contains (4, null, null, null, null, null).
+section-2-java-assignment-onlinebookstore-1  | 2023-08-12T12:14:07.807Z ERROR 1 --- [nio-8080-exec-1] c.o.controller.CustomErrorController     : Database constraint violation: could not execute statement [ERROR: null value in column "title" of relation "books" violates not-null constraint
+section-2-java-assignment-onlinebookstore-1  |   Detail: Failing row contains (4, null, null, null, null, null).] [insert into books (author,isbn,price,quantity,title) values (?,?,?,?,?)]; SQL [insert into books (author,isbn,price,quantity,title) values (?,?,?,?,?)]; constraint [title" of relation "books]
+
+Failed Request #2. 
+![img.png](img.png)
+Custom Error Message: {
+"status": "UNSUPPORTED_MEDIA_TYPE",
+"message": "Unsupported media type."
+}
+Custom Error Logs:
+section-2-java-assignment-onlinebookstore-1  | 2023-08-12T12:20:44.035Z ERROR 1 --- [io-8080-exec-10] c.o.controller.CustomErrorController     : Unsupported media type error: Content-Type 'multipart/form-data;boundary=--------------------------134852517067505583880478;charset=UTF-8' is not supported
+
+
 # High Level Approach
 - Functional Requirements:
   - Microservice that does simple HTTP actions, GET, PUT, UPDATE, DELETE
@@ -56,7 +84,7 @@ Make sure to handle any potential exceptions or errors that may occur during dat
     - Use logging library like Log4j to log exceptions and events
   - Improve Performance of DB:
     - Index important fields in postgres where queries hit the most
-    - Consider using cache like Redis or Memcached. 
+    - Consider using cache liek 
 
 - Deployment Considerations:
   - Docker Approach:

@@ -18,6 +18,21 @@ Once inside the docker container:
         
     psql -U myuser mydatabase
 
+Folder structure: 
+- README.md (Contains questions, answers, code snippets)
+- `docker/`
+  - Dockerfile (Stand up Postgres ENV on local docker engine)
+  - DDL.sql (Basic Data Definition Language to stand up tables and insert mock values)
+- `queries/`
+  - relevant .sql queries, copy and paste the relevant snippets and run them in psql shell as needed
+  - Optionally you may also choose to spin up a lightweight SQL client like sqlelectron or DBeaver to connect to the Postgres container.
+  - I prefer using psql shell directly tho :)
+- `terraform/`
+  - TODO: simple rds.tf script that spins up the same infra in AWS instead. Along with all the defined DDL.
+  - Likely will use RDS in Postgres. 
+
+
+
 # Q1. Update Query
 *Q: When a customer updates their contact phone number, what query should we run in order to save that update to the database?*
 

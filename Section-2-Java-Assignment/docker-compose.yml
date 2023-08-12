@@ -1,0 +1,21 @@
+version: '3'
+services:
+  database:
+    build: ./docker/db
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: bookstore
+    ports:
+      - "5432:5432"
+  onlinebookstore:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/bookstore
+
