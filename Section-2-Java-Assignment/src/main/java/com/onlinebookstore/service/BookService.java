@@ -30,5 +30,29 @@ public class BookService {
         return bookRepository.findAll();
     }
 
-    // Add methods for delete, update and other CRUD operations as needed
+    public void removeBook(Long id) {
+        bookRepository.deleteById(id);
+    }
+
+    public Book updateBookQuantity(Long id, Integer quantity) {
+        Optional<Book> bookOptional = bookRepository.findById(id);
+
+        if (bookOptional.isPresent()) {
+            Book book = bookOptional.get();
+            book.setQuantity(quantity);
+            return bookRepository.save(book);
+        }
+
+        throw new IllegalArgumentException("Book with the given ID not found.");
+    }
+
+    public Integer getBookQuantity(Long id) {
+        Optional<Book> bookOptional = bookRepository.findById(id);
+
+        if (bookOptional.isPresent()) {
+            return bookOptional.get().getQuantity();
+        }
+
+        throw new IllegalArgumentException("Book with the given ID not found.");
+    }
 }

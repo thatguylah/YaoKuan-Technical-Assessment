@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
-//import org.postgresql.util.PSQLException; // Assuming you're using PostgreSQL as your database
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.hibernate.exception.ConstraintViolationException; // This import is for the DataIntegrityViolationException
 import com.onlinebookstore.model.entity.ApiError;
 
@@ -35,6 +35,20 @@ public class CustomErrorController {
             return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
         }
         throw ex; // Rethrow exceptions that we don't specifically handle here
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiError> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        Throwable cause = ex.getCause();
+        if (cause != null && cause.getMessage() != null && cause.getMessage().contains("Unexpected character")) {
+            ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "Invalid JSON format.");
+            logger.error("Invalid JSON format: {}", ex.getMessage());
+            return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+        }
+
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "Invalid request body format.");
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
