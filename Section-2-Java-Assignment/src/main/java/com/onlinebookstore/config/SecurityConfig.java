@@ -9,7 +9,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import com.onlinebookstore.service.UserService;
+import com.onlinebookstore.util.JwtRequestFilter;
+import com.onlinebookstore.util.JwtUtil;
 
 
 @Configuration
@@ -17,16 +20,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
 
-    public SecurityConfig(UserService userService) {
+    private final JwtUtil jwtUtil;
+
+
+    public SecurityConfig(UserService userService, JwtUtil jwtUtil) {
         this.userService = userService;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable() // Disabling CSRF protection
-        //... other configurations like authorizeRequests, formLogin, etc. if needed.
-        ;
+        http.csrf().disable()
+                .authorizeRequests()
+                .antMatchers(
+                        "/api/users/login",
+                        "/api/users/register",
+                        "/api/users",
+                        "/api/books",
+                        "/",
+                        "/swagger-ui/**",     // Permit Swagger UI path
+                        "/v3/api-docs/**",    // Permit Swagger docs path
+                        "/v2/api-docs/**",    // Permit Swagger docs path
+                        "/swagger-resources/**",
+                        "/webjars/**"
+                ).permitAll()  // Assuming these are your login and register endpoints
+                .anyRequest().authenticated()
+                .and()
+                .addFilterBefore(new JwtRequestFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
