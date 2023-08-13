@@ -26,6 +26,13 @@ public class User {
     @Column(name = "role")
     private UserRole role;
 
+    public User(String username, String passwordHash, UserRole role) {
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.role = role;
+    }
+
+
     public String getUsername(){
         return username;
     }

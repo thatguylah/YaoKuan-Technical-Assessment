@@ -39,10 +39,14 @@ public class UserService implements UserDetailsService {
     }
 
     public User registerUser(UserRegistrationDTO userDto) {
-        User user = new User();
-        user.setUsername(userDto.getUsername());
-        user.setPasswordHash(passwordEncoder.encode(userDto.getPassword()));
-        user.setUserRole(userDto.getRole());
+        User user = new User(
+                userDto.getUsername(),
+                passwordEncoder.encode(userDto.getPassword()),
+                userDto.getRole()
+        );
+//        user.setUsername(userDto.getUsername());
+//        user.setPasswordHash(passwordEncoder.encode(userDto.getPassword()));
+//        user.setUserRole(userDto.getRole());
         return userRepository.save(user);
     }
 
