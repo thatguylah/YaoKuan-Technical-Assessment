@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
-import java.util.Collections;
+
 
 
 @Service
@@ -20,6 +19,11 @@ public class SearchService {
     private static final Logger logger = LoggerFactory.getLogger(SearchService.class);
     private final BookRepository bookRepository;
 
+    /**
+     * Constructor to initialize dependencies for SearchService.
+     *
+     * @param bookRepository the repository to manage books.
+     */
     @Autowired
     public SearchService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
@@ -45,29 +49,31 @@ public class SearchService {
         return bookRepository.findByQuantityInStockGreaterThan(0);
     }
 
+    /**
+     * Searches for books based on the given search criteria provided within the {@link SearchBookDTO}.
+     * The method performs a fuzzy search on the title, author, and ISBN fields of the books.
+     * If any of these fields in the DTO is null or empty, that field is disregarded in the search criteria.
+     *
+     * @param searchBookDto The search criteria encapsulated in a DTO.
+     * @return A list of books matching the provided search criteria.
+     */
+
     public List<Book> combinedSearch(SearchBookDTO searchBookDto) {
-        String title = searchBookDto.getTitle();
-        String author = searchBookDto.getAuthor();
-        String isbn = searchBookDto.getIsbn();
+        String title = (searchBookDto.getTitle() == null || searchBookDto.getTitle().isEmpty()) ? null : searchBookDto.getTitle();
+        String author = (searchBookDto.getAuthor() == null || searchBookDto.getAuthor().isEmpty()) ? null : searchBookDto.getAuthor();
+        String isbn = (searchBookDto.getIsbn() == null || searchBookDto.getIsbn().isEmpty()) ? null : searchBookDto.getIsbn();
 
-        // If null or empty, use a wildcard-like string to match all
-        title = (title == null || title.isEmpty()) ? "" : title;
-        author = (author == null || author.isEmpty()) ? "" : author;
-        isbn = (isbn == null || isbn.isEmpty()) ? "" : isbn;
-
-        List<Book> titleResults = searchByTitle(title);
-        List<Book> authorResults = searchByAuthor(author);
-        List<Book> isbnResults = searchByIsbn(isbn);
-
-        // Stream.of will put these lists in a stream
-        // The reduce function will take the intersection of these lists
-        return Stream.of(titleResults, authorResults, isbnResults)
-                .reduce((list1, list2) -> {
-                    // retainAll modifies the list in place and returns a boolean
-                    list1.retainAll(list2);
-                    return list1; // returning the modified list
-                }).orElse(Collections.emptyList()); // default to empty list if none are present
+        return bookRepository.findByTitleContainingAndAuthorContainingAndIsbnContaining(title, author, isbn);
     }
+
+    /**
+     * Filters the list of books based on the provided filter criteria within the {@link FilterBookDTO}.
+     * It allows filtering based on a price range and whether the book is in stock.
+     * If the "avail" field in the DTO is true, it only returns books that are in stock.
+     *
+     * @param filterCriteria The filter criteria encapsulated in a DTO.
+     * @return A list of books matching the provided filter criteria.
+     */
 
     public List<Book> combinedFilter(FilterBookDTO filterCriteria) {
         Double minPrice = Optional.of(filterCriteria.getMinPrice()).orElse(Double.NEGATIVE_INFINITY);

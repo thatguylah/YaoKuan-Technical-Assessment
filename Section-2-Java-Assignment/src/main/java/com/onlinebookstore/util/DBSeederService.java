@@ -6,17 +6,19 @@ import com.onlinebookstore.model.entity.User;
 import com.onlinebookstore.model.entity.Book;
 import com.onlinebookstore.model.entity.UserRole;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Service
 public class DBSeederService {
 
-    @Autowired
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public DBSeederService(BookRepository bookRepository, UserRepository userRepository) {
+        this.bookRepository = bookRepository;
+        this.userRepository = userRepository;
+    }
 
     public void seedDatabase() {
         Faker faker = new Faker();
@@ -36,7 +38,7 @@ public class DBSeederService {
         // Seed Users (For example: 10 users)
         for (int i = 0; i < 10; i++) {
             User user = new User(
-                    faker.internet().avatar(),
+                    faker.name().username(),
                     faker.internet().password(),
                     UserRole.USER
             );

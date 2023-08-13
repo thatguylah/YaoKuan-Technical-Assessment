@@ -4,12 +4,33 @@
 3. How to use
 
 # TODO: 
-Search And Filter
-Auth and Auth 
+Search And Filter(DONE)
+Auth and Auth  (DONE)
 Error Handling (Actl this alr done just gotta add more error handlers)
 Testing 
 Performance Optimization (Low prio maybe use cache)
 
+# How to use? 
+Prerequisites: You must have docker engine installed and docker daemon running. 
+FYI: I am using macbook pro m2, which uses a ARM64 architecture, in the unlikely event you can not build the image correctly,
+you might want to try building the docker image for x86 chipsets. 
+
+1. Navigate to root of Section-2-Java-Assignment on CLI.
+2. You should see `docker-compose.yml`. 
+3. Optionally, if you would like to seed the database on initialization, i have included it in `Section-2-Java-Assignment/src/main/resources/application.properties`. By default `seed.database=true` is enabled by default, only turn this off if you would not want to seed the DB with mock values. Note that this seed occurs each time the containers spin up. 
+4. in the root dir of section 2, run `docker-compose build --no-cache `
+5. then run `docker-compose up` 
+6. you are good to go! Endpoints should be up and running on localhost:8080 
+
+
+7. After the containers have initialized and spun up, navigate to http://localhost:8080/swagger-ui/#/ on your browser, you should see OpenAPI Swagger frontend for API documentation. 
+8. More info on how to use the APIs: getAllBooks, getAllUsers, loginUser, registerUser are "public" APIs and dont need you to login to obtain a valid JWT. 
+9. First you should register a new user, click on registerUser,click on Try it Out, type in username and password of your choosing, leave userRole as is. Then click on the blue Execute button, you should see a response 200 and your username and password hash in the response body.
+10. Great! Now that you have registered as a user in our onlinebookstore, you need to log yourself in. Click on loginUser, enter your username and password as before and click on Execute button below. You should see response 200 and in the response body contains a string for your JWT auth token.
+11. Copy the JWT auth token to your clipboard and scroll up to find a green Authorize button on the UI. 
+12. You should see a textbox "Value", type `Bearer <INSERT_YOUR_JWT_TOKEN_HERE>` without the `<>` brackets. Click on Authorize, you are now logged in and can use the rest of the "private" APIs as Swagger automatically inserts the Bearer token in the header for you for API authorization. 
+13. Without a valid Bearer token, you will not be able to use the rest of the APIs and will receive a error 403. This nicely suits the bonus requirement of authorizing logged in users to perform certain actions. 
+14. 
 # Assignment
 You are tasked with implementing a simple online bookstore inventory system. The inventory consists of books, and you need to design data structures and implement algorithms to manage the inventory. Additionally, you need to interact with a SQL database to store and retrieve data.
 

@@ -24,9 +24,15 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-
     private final ApplicationContext ctx;
-
+    /**
+     * Constructor to initialize dependencies for UserService.
+     * This is needed to authenticate users created in our user pool and validate their JWT.
+     *
+     * @param userRepository the repository to manage users.
+     * @param jwtUtil utility to handle JWT operations.
+     * @param ctx the ApplicationContext to get beans.
+     */
     public UserService(UserRepository userRepository, JwtUtil jwtUtil, ApplicationContext ctx) {
         this.userRepository = userRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
@@ -38,23 +44,37 @@ public class UserService implements UserDetailsService {
         return ctx.getBean("myAuthenticationManager", AuthenticationManager.class);
     }
 
+    /**
+     * Register a new user to the system.
+     *
+     * @param userDto the data transfer object containing user registration data.
+     * @return the registered user entity.
+     */
+
     public User registerUser(UserRegistrationDTO userDto) {
         User user = new User(
                 userDto.getUsername(),
                 passwordEncoder.encode(userDto.getPassword()),
                 userDto.getRole()
         );
-//        user.setUsername(userDto.getUsername());
-//        user.setPasswordHash(passwordEncoder.encode(userDto.getPassword()));
-//        user.setUserRole(userDto.getRole());
         return userRepository.save(user);
     }
 
-
+    /**
+     * Retrieve all users from the system.
+     *
+     * @return a list of all user entities.
+     */
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
+    /**
+     * Authenticate a user and generate a JWT token for them.
+     *
+     * @param userLoginDto the data transfer object containing user login data.
+     * @return a JWT token string.
+     */
     public String authenticateAndRetrieveJWT(UserLoginDTO userLoginDto) {
         Authentication auth = authenticate(
                 userLoginDto.getUsername(),
@@ -62,7 +82,13 @@ public class UserService implements UserDetailsService {
         );
         return generateToken(auth);
     }
-
+    /**
+     * Helper function to authenticate users
+     * Not meant to be used directly, rather used through authenticateAndRetrieveJWT
+     * Same as generateToken below.
+     * loadUserByUsername is a REQUIRED abstract function that needs to be implemented for Spring Boot Security.
+     * It is not used anywhere in our application code, but cannot be removed!!!
+     */
     public Authentication authenticate(String username, String password) {
         return getAuthenticationManager().authenticate(
                 new UsernamePasswordAuthenticationToken(username, password)

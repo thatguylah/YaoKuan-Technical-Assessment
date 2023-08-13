@@ -23,13 +23,24 @@ public class UserController {
         this.userService = userService;
     }
 
+    /**
+     * Registers a new user.
+     *
+     * @param userDTO The user registration data transfer object.
+     * @return ResponseEntity containing the registered user or an error message.
+     */
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@Valid @RequestBody UserRegistrationDTO userDTO) {
         User registerdUser = userService.registerUser(userDTO);
         return ResponseEntity.ok(registerdUser);
     }
 
-
+    /**
+     * Authenticates a user and retrieves a JWT token.
+     *
+     * @param userLoginDto The user login data transfer object.
+     * @return ResponseEntity containing the JWT token or an error message.
+     */
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody UserLoginDTO userLoginDto) {
         String jwtToken = userService.authenticateAndRetrieveJWT(userLoginDto);
