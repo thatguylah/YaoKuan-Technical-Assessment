@@ -12,7 +12,8 @@ COPY ../../src ./src/
 RUN apt-get update && apt-get install -y maven
 
 # Package the application
-RUN mvn package -DskipTests
+#RUN mvn package -DskipTests
+RUN mvn package
 
 # Use the official Amazon Corretto image for runtime
 FROM eclipse-temurin:17
