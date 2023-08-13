@@ -1,0 +1,8 @@
+com.onlinebookstore
+com.onlinebookstore.config
+com.onlinebookstore.controller
+com.onlinebookstore.model.dto
+com.onlinebookstore.model.entity
+com.onlinebookstore.repository
+com.onlinebookstore.service
+com.onlinebookstore.util
