@@ -12,8 +12,8 @@
 	<groupId>com.onlinebookstore</groupId>
 	<artifactId>onlinebookstore</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>online bookstore</name>
-	<description>Technical assessment for autodesk Section 2</description>
+	<name>onlinebookstore</name>
+	<description>Technical assessment for autodesk</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
@@ -90,6 +90,13 @@
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>3.0.0</version>
 		</dependency>
+<!--		Database Seeder -->
+		<dependency>
+			<groupId>com.github.javafaker</groupId>
+			<artifactId>javafaker</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
 
 
 
