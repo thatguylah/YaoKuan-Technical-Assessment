@@ -79,6 +79,11 @@ class BookServiceTest {
     @Test
     void testRemoveBook() {
         Long id = 1L;
+
+        // Mock the behavior of the existsById method
+        when(bookRepository.existsById(id)).thenReturn(true);
+
+        // Mock the behavior of the deleteById method
         doNothing().when(bookRepository).deleteById(id);
 
         bookService.removeBook(id);

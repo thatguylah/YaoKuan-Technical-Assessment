@@ -19,10 +19,10 @@ public class BookService {
     }
 
     /**
-     * Save a new book to the database.
+     * Persist a new book entity into the database.
      *
-     * @param book the book entity to be saved.
-     * @return the saved book entity.
+     * @param book the book entity to be persisted.
+     * @return the persisted book entity.
      */
     public Book addBook(Book book) {
         return bookRepository.save(book);
@@ -48,48 +48,52 @@ public class BookService {
     }
 
     /**
-     * Remove a book from the database by its ID.
+     * Deletes a book from the database using its unique ID.
+     * Throws an exception if the book does not exist.
      *
-     * @param id the ID of the book to be removed.
+     * @param id the unique ID of the book to be deleted.
+     * @throws BookNotFoundException if no book with the given ID is found.
      */
 
     public void removeBook(Long id) {
-        bookRepository.deleteById(id);
+        if (bookRepository.existsById(id)) {
+            bookRepository.deleteById(id);
+        } else {
+            throw new BookNotFoundException("Book with ID " + id + " not found.");
+        }
     }
 
     /**
-     * Update the quantity of a specific book.
+     * Updates the quantity of a book identified by its unique ID.
      *
-     * @param id the ID of the book.
-     * @param quantity the new quantity to set.
-     * @return the updated book entity.
-     * @throws IllegalArgumentException if the book with the given ID is not found.
+     * @param id the unique ID of the book.
+     * @param quantity the new quantity to be set for the book.
+     * @return the updated book entity with the new quantity.
+     * @throws BookNotFoundException if no book with the given ID is found.
      */
     public Book updateBookQuantity(Long id, Integer quantity) {
-        Optional<Book> bookOptional = bookRepository.findById(id);
-
-        if (bookOptional.isPresent()) {
-            Book book = bookOptional.get();
+        return bookRepository.findById(id).map(book -> {
             book.setQuantity(quantity);
             return bookRepository.save(book);
-        }
-
-        throw new IllegalArgumentException("Book with the given ID not found.");
+        }).orElseThrow(() -> new BookNotFoundException("Book with ID " + id + " not found."));
     }
+
     /**
-     * Obtain the quantity of a specific book.
+     * Retrieves the stock quantity of a specific book using its unique ID.
      *
-     * @param id the ID of the book.
-     * @return the quantityInStock of book entity.
-     * @throws IllegalArgumentException if the book with the given ID is not found.
+     * @param id the unique ID of the book.
+     * @return the current stock quantity of the specified book.
+     * @throws BookNotFoundException if no book with the given ID is found.
      */
     public Integer getBookQuantity(Long id) {
-        Optional<Book> bookOptional = bookRepository.findById(id);
+        return bookRepository.findById(id)
+                .map(Book::getQuantity)
+                .orElseThrow(() -> new BookNotFoundException("Book with ID " + id + " not found."));
+    }
 
-        if (bookOptional.isPresent()) {
-            return bookOptional.get().getQuantity();
+    public static class BookNotFoundException extends RuntimeException {
+        public BookNotFoundException(String message) {
+            super(message);
         }
-
-        throw new IllegalArgumentException("Book with the given ID not found.");
     }
 }
