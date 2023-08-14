@@ -1,8 +1,8 @@
 # Table of contents
-1. How to use? 
-2. Q1. Update Query
-3. Q2. Optimize Update Query
-4. Q3. SQL Queries
+1. [How to use?](#how-to-use) 
+2. [Q1. Update Query](#q1-update-query)
+3. [Q2. Optimize Update Query](#q2-optimize-update-query)
+4. [Q3. SQL Queries](#q3-sql-queries)
 5. TODO: Docker/Terraform for deployment purposes
 
 
@@ -18,7 +18,8 @@ Once inside the docker container:
         
     psql -U myuser mydatabase
 
-Folder structure: 
+
+### Folder structure: 
 - README.md (Contains questions, answers, code snippets)
 - `docker/`
   - Dockerfile (Stand up Postgres ENV on local docker engine)
@@ -28,7 +29,7 @@ Folder structure:
   - Optionally you may also choose to spin up a lightweight SQL client like sqlelectron or DBeaver to connect to the Postgres container.
   - I prefer using psql shell directly tho :)
 - `terraform/`
-  - TODO: simple rds.tf script that spins up the same infra in AWS instead. Along with all the defined DDL.
+  - simple main.tf script that spins up the same infra in AWS instead.
   - Likely will use RDS in Postgres. 
 
 
@@ -36,7 +37,7 @@ Folder structure:
 # Q1. Update Query
 *Q: When a customer updates their contact phone number, what query should we run in order to save that update to the database?*
 
-Basic answer:
+_Basic_ answer:
     
     UPDATE tblSubscriptionInfo
     SET customer_contact_phone = 'new-phone-number'
@@ -44,7 +45,7 @@ Basic answer:
 
 Replace 'new-phone-number' with the correct phone number and update only on customer_id
 
-Better answer:
+_Better_ answer:
     
     BEGIN;
 
@@ -55,6 +56,8 @@ Better answer:
     COMMIT;
 
 Why is this a better answer? For most OLTP systems such as this one, its important to maintain ACID transactions to ensure data integrity.
+
+
 A few key points on transactions:
 
 Atomicity: Transactions ensure that operations are atomic. This means all operations within the transaction are completed successfully, or none of them are. If an error occurs during any of the operations, a ROLLBACK can be issued to revert all changes made during that transaction.
@@ -69,9 +72,9 @@ Locking: When working with transactions in high concurrency environments, it's e
 
 In summary, for an OLTP system with multiple concurrent transactions, it's a good practice to use transactions to ensure data consistency and integrity, but it's also important to be aware of the implications and potential pitfalls.
 
-OPTIONALLY: 
+**OPTIONALLY**: 
 
-We also might want to check whether the Phone Number field is valid before actually committing, each transaction.
+We also might want to check whether the Phone Number field is valid before actually committing, each transaction. This can help to ensure constraint checks to ensure data validation. 
 
     DO $$
     BEGIN
@@ -97,7 +100,9 @@ TLDR;
 - Maintaining ACID for OLTP systems. 
 - Additional Considerations: Data Validation, Changing WHERE clause
 - Additional reading: 
-- 
+  - [Why use SQL transactions](https://www.linode.com/docs/guides/a-primer-on-sql-transactions/)
+  - [Requirements for an OLTP system and why we must maintain ACID](https://www.oracle.com/sg/database/what-is-oltp/#:~:text=Thus%20OLTP%20systems%20must%20comply,completed%20successfully%20as%20a%20group.)
+  
 # Q2. Optimize Update Query
 *Q: We've noted that the phone number update feature in the web application is too slow, and have identified that the update query is the primary bottleneck. What could we do to speed up this query?*
 
@@ -162,6 +167,10 @@ TLDR;
 - 3 techniques which can help optimize our update query. 
 - Other techniques include increasing physical capacity in one way or another. 
 - Not preferred if there are lower hanging fruits, but of course everything is a trade-off :)
+- Additional readings:
+    - [Indexing vs partitioning, when should we use each?](https://www.macrometa.com/distributed-data/database-indexing-and-partitioning)
+    - [Data Normalization, 1NF,2NF,3NF](https://www.simplilearn.com/tutorials/sql-tutorial/what-is-normalization-in-sql#:~:text=Normalization%20is%20the%20process%20to,data%20from%20the%20relational%20tables.)
+    - [Hussein Nasser - Dont shard your database](https://www.youtube.com/watch?v=iHNovZUZM3A)
 
 # Q3. SQL Queries
 - The assumption here is that `number of subscribers` will be number of unique subscribers, meaning if John Doe subscribed to two products, it counts as only one subscriber. 
