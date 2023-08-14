@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
+import io.swagger.annotations.*;
+
 
 import java.util.Optional;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
 /**
  * A RESTful controller that manages and provides endpoints related to books.
  */
+@Api(tags = "Book Management")  // <-- Class Level Annotation
 @RestController
 @RequestMapping("/api/books")
 @Validated
@@ -45,14 +48,11 @@ public class BookController {
         this.searchService = searchService;
     }
 
-    /**
-     * Adds a new book to the store.
-     * Any "id" value in the payload is ignored as it's supposed to be system-generated.
-     * Checks if any required fields are empty or null and rejects payload if true.
-     *
-     * @param book The book entity to be added.
-     * @return ResponseEntity containing the added book or an error message.
-     */
+    @ApiOperation(value = "Add a new book", notes = "Any 'id' value in the payload is ignored as it's supposed to be system-generated.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Successfully added the book."),
+            @ApiResponse(code = 400, message = "Invalid input data.")
+    })
     @PostMapping("/add")
     public ResponseEntity<Book> addBook(@Valid @RequestBody Book book) {
 
@@ -75,34 +75,28 @@ public class BookController {
         return ResponseEntity.ok(savedBook);
     }
 
-    /**
-     * Retrieves a specific book by its ID.
-     *
-     * @param id The ID of the book to retrieve.
-     * @return ResponseEntity containing the retrieved book or an error message.
-     */
+    @ApiOperation(value = "Retrieve a book by ID")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Successfully retrieved the book."),
+            @ApiResponse(code = 404, message = "Book not found.")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Book> getBook(@PathVariable Long id) {
         Optional<Book> bookOpt = bookService.getBook(id);
         return bookOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    /**
-     * Fetches all books available in the store.
-     *
-     * @return List of all books.
-     */
+    @ApiOperation(value = "Retrieve all books")
     @GetMapping
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();
     }
 
-    /**
-     * Removes a specific book by its ID.
-     *
-     * @param id The ID of the book to be removed.
-     * @return ResponseEntity indicating the success or failure of the operation.
-     */
+    @ApiOperation(value = "Remove a book by ID")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Successfully removed the book."),
+            @ApiResponse(code = 404, message = "Book not found.")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeBook(@PathVariable Long id) {
         logger.info("Removing book with id: {}", id);
@@ -110,13 +104,11 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Updates the quantity of a specific book.
-     *
-     * @param id       The ID of the book to be updated.
-     * @param quantity The new quantity for the book.
-     * @return ResponseEntity containing the updated book or an error message.
-     */
+    @ApiOperation(value = "Update a book's quantity")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Successfully updated the book's quantity."),
+            @ApiResponse(code = 404, message = "Book not found.")
+    })
     @PutMapping("/{id}/quantity")
     public ResponseEntity<Book> updateBookQuantity(@PathVariable Long id, @RequestBody Integer quantity) {
         logger.info("Updating quantity for book id: {} with quantity: {}", id, quantity);
@@ -124,12 +116,11 @@ public class BookController {
         return ResponseEntity.ok(updatedBook);
     }
 
-    /**
-     * Fetches the quantity of a specific book.
-     *
-     * @param id The ID of the book whose quantity is to be fetched.
-     * @return ResponseEntity containing the quantity of the book.
-     */
+    @ApiOperation(value = "Retrieve a book's quantity")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Successfully retrieved the book's quantity."),
+            @ApiResponse(code = 404, message = "Book not found.")
+    })
     @GetMapping("/{id}/quantity")
     public ResponseEntity<Integer> getBookQuantity(@PathVariable Long id) {
         logger.info("Retrieving quantity for book id: {}", id);
@@ -137,17 +128,17 @@ public class BookController {
         return ResponseEntity.ok(quantity);
     }
 
-    /**
-     * Searches for books based on the given search criteria. The criteria can include fields such as
-     * title, author, and ISBN. The search operation uses fuzzy matching to provide results that closely match
-     * the provided criteria, even if they're not exact. For instance, if "Har" is provided in the title,
-     * it may return books titled "Harry Potter" or "Harbour".
-     *
-     * @param searchCriteria The DTO containing fields such as title, author, and ISBN to specify the search parameters.
-     *                       Each of these fields is optional, allowing for flexible searches.
-     * @return ResponseEntity containing the list of books that match the provided criteria. If no matches are found,
-     *         an empty list is returned.
-     */
+    @ApiOperation(
+            value = "Search for books by given criteria",
+            notes = "The criteria can include fields such as title, author, and ISBN. " +
+                    "The search operation uses fuzzy matching to provide results that closely match " +
+                    "the provided criteria, even if they're not exact. For instance, if 'Har' is provided in the title, " +
+                    "it may return books titled 'Harry Potter' or 'Harbour'. Each of these fields is optional, allowing for flexible searches."
+    )
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Successfully retrieved the list of matching books."),
+            @ApiResponse(code = 400, message = "Invalid input data.")
+    })
     @PostMapping("/search")
     public ResponseEntity<List<Book>> searchBooks(@RequestBody SearchBookDTO searchCriteria) {
         logger.info("Searching for books using the following criteria:{}",searchCriteria);
@@ -156,19 +147,17 @@ public class BookController {
 
     }
 
-    /**
-     * Filters books based on the provided criteria. This method is designed to narrow down results
-     * by focusing on specific attributes such as price range and availability. The filter can be set
-     * to focus on a range of prices or filter out books that aren't available in stock.
-     *
-     * For example, specifying a minPrice and maxPrice will return books priced within that range.
-     * Specifying avail as true will return only those books that are currently in stock.
-     *
-     * @param filterCriteria The DTO containing fields such as minPrice, maxPrice, and avail to specify the filter parameters.
-     *                       Each of these fields is optional, allowing for flexible filtering.
-     * @return ResponseEntity containing the list of books that match the provided filter criteria. If no matches are found,
-     *         an empty list is returned.
-     */
+    @ApiOperation(
+            value = "Filter books by given criteria",
+            notes = "This method is designed to narrow down results by focusing on specific attributes such as price range and availability. " +
+                    "The filter can be set to focus on a range of prices or filter out books that aren't available in stock. " +
+                    "For example, specifying a minPrice and maxPrice will return books priced within that range. " +
+                    "Specifying avail as true will return only those books that are currently in stock. Each of these fields is optional, allowing for flexible filtering."
+    )
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Successfully retrieved the list of matching books."),
+            @ApiResponse(code = 400, message = "Invalid input data.")
+    })
     @PostMapping("/filter")
     public ResponseEntity<List<Book>> filterBooks(@RequestBody FilterBookDTO filterCriteria) {
         logger.info("Filtering for books using the following criteria:{}",filterCriteria);

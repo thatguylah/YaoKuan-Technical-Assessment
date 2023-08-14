@@ -2,16 +2,19 @@ package com.onlinebookstore.controller;
 
 import com.onlinebookstore.model.entity.User;
 import com.onlinebookstore.service.UserService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.onlinebookstore.model.dto.UserRegistrationDTO;
 import com.onlinebookstore.model.dto.UserLoginDTO;
 import org.springframework.http.ResponseEntity;
+import io.swagger.annotations.*;
 
 
 import javax.validation.Valid;
 import java.util.List;
 
+@Api(tags = "User Management")  // <-- Class Level Annotation
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -23,31 +26,33 @@ public class UserController {
         this.userService = userService;
     }
 
-    /**
-     * Registers a new user.
-     *
-     * @param userDTO The user registration data transfer object.
-     * @return ResponseEntity containing the registered user or an error message.
-     */
+    @ApiOperation(value = "Registers a new user")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully registered user"),
+            @ApiResponse(code = 400, message = "Invalid input or user already exists")
+    })
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@Valid @RequestBody UserRegistrationDTO userDTO) {
         User registerdUser = userService.registerUser(userDTO);
         return ResponseEntity.ok(registerdUser);
     }
 
-    /**
-     * Authenticates a user and retrieves a JWT token.
-     *
-     * @param userLoginDto The user login data transfer object.
-     * @return ResponseEntity containing the JWT token or an error message.
-     */
+    @ApiOperation(value = "Authenticates a user and retrieves a JWT token")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully authenticated and retrieved JWT token"),
+            @ApiResponse(code = 401, message = "Invalid credentials"),
+            @ApiResponse(code = 400, message = "Bad request")
+    })
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody UserLoginDTO userLoginDto) {
         String jwtToken = userService.authenticateAndRetrieveJWT(userLoginDto);
         return ResponseEntity.ok(jwtToken);
     }
 
-
+    @ApiOperation(value = "Retrieves a list of all registered users")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved list of users")
+    })
     @GetMapping
     private List<User> getAllUsers() {
         return userService.getAllUsers();

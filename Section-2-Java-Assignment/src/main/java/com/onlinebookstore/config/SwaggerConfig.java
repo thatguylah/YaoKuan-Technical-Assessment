@@ -23,7 +23,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
+                .paths(PathSelectors.any().and(PathSelectors.ant("/error").negate())) // Exclude /error
                 .build()
                 .apiInfo(getApiInfo())
                 .securityContexts(Collections.singletonList(securityContext()))
@@ -32,13 +32,13 @@ public class SwaggerConfig {
 
     private ApiInfo getApiInfo() {
         return new ApiInfo(
-                "Your API Title",
-                "Your API Description",
-                "VERSION",
-                "TERMS OF SERVICE URL",
-                new Contact("NAME", "URL", "EMAIL"),
-                "LICENSE",
-                "LICENSE URL",
+                "onlinebookstore",
+                "Spring Boot onlinebookstore! For autodesk DE assessment :)",
+                "0.1",
+                "https://smartbear.com/terms-of-use/",
+                new Contact("Yao Kuan", "https://github.com/thatguylah", "chanyaokuan@gmail.com"),
+                "Apache 2.0",
+                "https://www.apache.org/licenses/LICENSE-2.0.html",
                 Collections.emptyList()
         );
     }

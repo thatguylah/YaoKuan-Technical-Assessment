@@ -1,7 +1,12 @@
 # Table of contents
-1. Assignment Prompt
-2. High Level Approach
-3. How to use
+1. How to use?
+2. Project Overview
+3. Design Patterns used
+4. Authenticating and Authorizing Users 
+5. Handling Errors, Exceptions and Logging
+6. Performance Optimizations
+7. Future Improvements
+8. Appendix: Initial Draft
 
 # TODO: 
 Search And Filter(DONE)
@@ -30,31 +35,52 @@ you might want to try building the docker image for x86 chipsets.
 11. Copy the JWT auth token to your clipboard and scroll up to find a green Authorize button on the UI. 
 12. You should see a textbox "Value", type `Bearer <INSERT_YOUR_JWT_TOKEN_HERE>` without the `<>` brackets. Click on Authorize, you are now logged in and can use the rest of the "private" APIs as Swagger automatically inserts the Bearer token in the header for you for API authorization. 
 13. Without a valid Bearer token, you will not be able to use the rest of the APIs and will receive a error 403. This nicely suits the bonus requirement of authorizing logged in users to perform certain actions. 
-14. 
-# Assignment
-You are tasked with implementing a simple online bookstore inventory system. The inventory consists of books, and you need to design data structures and implement algorithms to manage the inventory. Additionally, you need to interact with a SQL database to store and retrieve data.
+14. You can also view auto generated javadocs at `/src/docs/`
 
-Requirement:
 
-Implement a microservice Bookstore that contains the following functionality:
-Add a book to the inventory.
-Remove a book from the inventory.
-Update the quantity in stock for a given book.
-Retrieve the quantity in stock for a given book.
-List all books in the inventory.
-Implement at least one popular design pattern in your solution. You can choose from patterns like Singleton, Factory, Observer, Strategy, or any other appropriate pattern that fits the context of the problem.
-Additional Requirements (Bonus Points):
 
-Search and Filter Functionality: Implement a search functionality that allows users to search for books by their title, author, or ISBN. Additionally, add filtering options to search for books based on price range, availability, or any other relevant criteria.
-Authentication and Authorization: Implement a simple authentication mechanism for users, including registration and login. Ensure that only authenticated users can perform certain actions, such as adding books to the inventory or making purchases.
-Error Handling and Logging: Implement robust error handling and logging mechanisms to capture and log any exceptions or errors that occur during the execution of the system.
-Performance Optimization: Optimize the database queries and operations for improved performance and efficiency, especially when dealing with large datasets.
-Instructions:
+# Project Overview
+The Online Bookstore backend is meticulously structured to ensure modularity, maintainability, and a clear separation of concerns. Let's break down the main components:
 
-Use Java to implement the classes and methods described above. You may use any popular java framework such as Spring Boot, Micronaut, hibernate etc...
-Use any relational database of your choice (e.g., MySQL, PostgreSQL) for storing the book information. Include instructions on how to set up the database schema and connection details in your submission.
-You can use any appropriate data structures and algorithms to implement the functionalities.
-Make sure to handle any potential exceptions or errors that may occur during database interactions or book inventory management.
+Packages:
+Model (entity): This package hosts the core data structures and entities which represent the main objects we're working with - in this case, books. It describes the attributes a book might have, such as title, author, price, etc.
+
+Service: Services play a crucial role in our application. They hold the business logic and act as a bridge between the Controllers and the Repositories. By ensuring that the logic stays in the service layer, the application remains modular and easier to maintain and test. If we ever needed to change how a certain feature works, we'd look into the Service layer.
+
+Controller: Controllers act as gatekeepers. They intercept the API requests, process the data, and hand it over to the service layer. After the service layer processes the data, the controller takes charge again to send the response back to the client. Controllers in our project are meticulously designed to be lean, ensuring that they only handle the request and response, without being burdened with business logic.
+
+Repository: This is where the data access logic resides. Using Spring Data JPA, we've abstracted most of the complex DB operations, ensuring that our application remains flexible. If there's a need to switch databases in the future or change how data fetch operations work, this is the package you'd dive into.
+
+Adoption Reasoning: This layered approach, often referred to as the multi-tier architecture, allows for clear separation of responsibilities. Each component or layer has a distinct role to play, ensuring that changes in one part of the application have minimal ripple effects on others. Moreover, it makes testing easier as each component can be tested in isolation.
+
+Project Navigation:
+For adding, retrieving, updating, and deleting books, look into the Controller package.
+For business rules and logic, dive into the Service layer.
+For data access and storage, the Repository package is where you'd want to be.
+For data structure and representation, look no further than the Model (entity) package.
+
+# Design Patterns used
+   The application employs several design patterns ensuring scalability, maintainability, and separation of concerns:
+
+MVC (Model-View-Controller) for a clear separation between application logic, data, and UI (in this case, the API responses).
+Repository Pattern: Ensuring a clear separation between the business logic and data access logic.
+DTO (Data Transfer Objects) to abstract the internal workings and provide clients with the necessary data without exposing the entire data model.
+# Authenticating and Authorizing Users
+   JWT (JSON Web Tokens) is employed for both authentication and authorization. Upon successful login, users receive a JWT, which needs to be sent in subsequent requests' headers to access protected endpoints. This ensures security by allowing only authenticated and authorized users to access certain functionalities.
+
+# Handling Errors, Exceptions and Logging
+   Exception Handling: A centralized exception handling mechanism using @ControllerAdvice ensures that all exceptions are caught and processed uniformly, providing meaningful error messages to the client.
+   Logging: Efficient logging mechanisms are in place using Logback, ensuring that all important events, errors, and information are logged for debugging and monitoring purposes. 
+   
+# Performance Optimizations
+   Database Indexing: Postgres DB indexes have been set up on frequently queried columns to accelerate data retrieval times.
+   Query Optimization: JPA and Hibernate are used judiciously, ensuring that only necessary data is fetched and unnecessary joins are avoided.
+   Containerization: Using Docker ensures that the application environment is consistent across different stages of development, thereby avoiding performance discrepancies.
+
+# Future Improvements
+   Caching: Introducing caching mechanisms like Redis to further enhance data retrieval times for frequently accessed endpoints.
+   Integration with Frontend: A frontend application for a more visual interaction with the online bookstore.
+   Extended Logging and Monitoring: Implementing tools like ELK (Elasticsearch, Logstash, Kibana) stack for advanced logging and monitoring.
 
 # Design Pattern used
 Certainly. Let's address the structures in the context of the design patterns provided in the prompt.
