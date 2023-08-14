@@ -86,8 +86,6 @@ public class UserService implements UserDetailsService {
      * Helper function to authenticate users
      * Not meant to be used directly, rather used through authenticateAndRetrieveJWT
      * Same as generateToken below.
-     * loadUserByUsername is a REQUIRED abstract function that needs to be implemented for Spring Boot Security.
-     * It is not used anywhere in our application code, but cannot be removed!!!
      */
     public Authentication authenticate(String username, String password) {
         return getAuthenticationManager().authenticate(
@@ -99,6 +97,10 @@ public class UserService implements UserDetailsService {
         return jwtUtil.generateToken(authentication);
     }
 
+    /**
+     * loadUserByUsername is a REQUIRED abstract function that needs to be implemented for Spring Boot Security.
+     * It is not used anywhere in our application code, but cannot be removed!!!
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);

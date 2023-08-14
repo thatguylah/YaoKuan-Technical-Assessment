@@ -29,26 +29,6 @@ public class SearchService {
         this.bookRepository = bookRepository;
     }
 
-    public List<Book> searchByTitle(String title){
-        return bookRepository.findByTitleContaining(title);
-    }
-
-    public List<Book> searchByAuthor(String author){
-        return bookRepository.findByAuthorContaining(author);
-    }
-
-    public List<Book> searchByIsbn(String isbn){
-        return bookRepository.findByIsbnContaining(isbn);
-    }
-
-    public List<Book> filterByPriceRange(Double minPrice, Double maxPrice){
-        return bookRepository.findByPriceBetween(minPrice, maxPrice);
-    }
-
-    public List<Book> filterByAvailability(){
-        return bookRepository.findByQuantityInStockGreaterThan(0);
-    }
-
     /**
      * Searches for books based on the given search criteria provided within the {@link SearchBookDTO}.
      * The method performs a fuzzy search on the title, author, and ISBN fields of the books.
